@@ -1,6 +1,7 @@
 import React, { useState, useRef, act } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView } from "react-native";
 import { colors } from "./Colors";
+import { useRouter } from "expo-router";
 
 type HeaderProps = {
     onSearch: (text: string) => void;
@@ -31,6 +32,8 @@ const Header = ({ onSearch }: HeaderProps) => {
         }
     }
 
+    const router = useRouter();
+
     return (
         <View style={styles.container}>
             <View style={styles.inner}>
@@ -43,7 +46,7 @@ const Header = ({ onSearch }: HeaderProps) => {
                         <TouchableOpacity onPress={toggleSearch}>
                             <Image source={require('../../assets/images/header/icon-search.png')} style={styles.smallIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={toggleSearch}>
+                        <TouchableOpacity onPress={() => router.push('/wishlist')}>
                             <Image source={require('../../assets/images/header/icon-like.png')} style={styles.smallIcon} />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={toggleSearch}>

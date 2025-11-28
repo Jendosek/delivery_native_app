@@ -5,6 +5,8 @@ import { mockItemData } from "./MockData";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "./Colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useOrderStore } from "../store/index";
+import { useOrderWishStore } from "../store/indexWishStore";
 
 type CardProps = {
     item: Item;
@@ -12,11 +14,36 @@ type CardProps = {
     tooglePizzaSize?: (item: Item) => void;
 };
 
+
 const Card = ({ item }: CardProps) => {
     const [selectedSize, setSelectedSize] = useState(item.selectedSize || 32);
 
     const currentPrice = selectedSize === 32 ? item.newPrice : item.size42;
     const currentWeight = selectedSize === 32 ? item.weight32 : item.weight42;
+
+    const addOrder = useOrderStore((state) => state.setOrders);
+    const getOrderPriceForPizza = useOrderStore((state) => state.getPriceForPizza);
+
+    const isLiked = useOrderWishStore((s) => s.isItemLiked({ ...item, selectedSize }));
+    const addWish = useOrderWishStore((s) => s.setOrdersWish);
+    const removeWish = useOrderWishStore((s) => s.removeOrderWishItem);
+
+    const onItemBuy = (pressedItem: Item) => {
+        const priceForSize = getOrderPriceForPizza({ ...pressedItem, selectedSize });
+        addOrder({
+            ...pressedItem,
+            selectedSize,
+            price: priceForSize,
+        });
+
+        
+    }
+
+    const onToggleLike = () => {
+        const payload = { ...item, selectedSize } as Item;
+        if (isLiked) removeWish(payload);
+        else addWish(payload);
+    };
 
     return (
         <TouchableOpacity activeOpacity={0.9} style={{ marginBottom: 12 }}>
@@ -38,45 +65,49 @@ const Card = ({ item }: CardProps) => {
                             </View>
                         )}
                     </View>
-                    
+
                     <View style={styles.contentContainer}>
                         <View style={styles.headerRow}>
                             <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                            <TouchableOpacity>
-                                <Ionicons name="heart-outline" size={22} color={colors.white} />
+                            <TouchableOpacity onPress={onToggleLike} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                                <Ionicons
+                                    name={isLiked ? 'heart' : 'heart-outline'}
+                                    size={22}
+                                    color={isLiked ? colors.red : colors.white}
+                                />
                             </TouchableOpacity>
                         </View>
 
                         <View style={styles.priceRow}>
                             <Text style={styles.price}>{currentPrice}</Text>
-                            <TouchableOpacity style={styles.orderButton}>
+                            <TouchableOpacity style={styles.orderButton} onPress={() => onItemBuy(item)}>
                                 <Text style={styles.orderButtonText}>Order</Text>
                             </TouchableOpacity>
                         </View>
 
                         <View style={styles.sizeRow}>
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={() => setSelectedSize(32)}
                                 style={[styles.sizeButton, selectedSize === 32 ? styles.sizeButtonActive : styles.sizeButtonInactive]}>
-                                <MaterialCommunityIcons 
-                                    name="diameter-outline" 
-                                    size={16} 
-                                    color={selectedSize === 32 ? colors.black : colors.red} 
-                                    style={{marginRight: 4}}
+                                <MaterialCommunityIcons
+                                    name="diameter-outline"
+                                    size={16}
+                                    color={selectedSize === 32 ? colors.black : colors.red}
+                                    style={{ marginRight: 4 }}
                                 />
                                 <Text style={selectedSize === 32 ? styles.sizeTextActive : styles.sizeTextInactive}>32 cm</Text>
                             </TouchableOpacity>
-                            
-                            <TouchableOpacity 
+
+                            <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={() => setSelectedSize(42)}
                                 style={[styles.sizeButton, selectedSize === 42 ? styles.sizeButtonActive : styles.sizeButtonInactive]}>
-                                <MaterialCommunityIcons 
-                                    name="diameter-outline" 
-                                    size={16} 
-                                    color={selectedSize === 42 ? colors.black : colors.red} 
-                                    style={{marginRight: 4}}/>
+                                <MaterialCommunityIcons
+                                    name="diameter-outline"
+                                    size={16}
+                                    color={selectedSize === 42 ? colors.black : colors.red}
+                                    style={{ marginRight: 4 }} />
                                 <Text style={selectedSize === 42 ? styles.sizeTextActive : styles.sizeTextInactive}>42 cm</Text>
                             </TouchableOpacity>
                         </View>
@@ -165,7 +196,7 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontSize: 18,
         fontWeight: '700',
-        flex: 1, 
+        flex: 1,
         marginRight: 8,
     },
     priceRow: {
@@ -229,7 +260,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     descriptionText: {
-        color: colors.textColor, 
+        color: colors.textColor,
         fontSize: 12,
         lineHeight: 16,
     },

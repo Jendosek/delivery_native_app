@@ -36,8 +36,15 @@ export default function HomeScreen() {
   return (
     <LinearGradient colors={[colors.gradientStart, colors.gradientEnd]} style={styles.gradient}>
       <SafeAreaView style={styles.container}>
-        <Animated.ScrollView style={[animatedTextStyle, styles.headerWrap]}>
-          <Header onSearch={onSearch} />
+        <Animated.ScrollView
+          style={styles.headerWrap}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+        >
+          <Animated.View style={animatedTextStyle}>
+            <Header onSearch={onSearch} />
+          </Animated.View>
+
           <ItemList />
         </Animated.ScrollView>
       </SafeAreaView>
