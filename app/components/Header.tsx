@@ -2,6 +2,7 @@ import React, { useState, useRef, act } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView } from "react-native";
 import { colors } from "./Colors";
 import { useRouter } from "expo-router";
+import useOrderStore from "../store/index";
 
 type HeaderProps = {
     onSearch: (text: string) => void;
@@ -13,6 +14,7 @@ const Header = ({ onSearch }: HeaderProps) => {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [activeTab, setActiveTab] = useState("Pizza");
     const inputRef = useRef<TextInput>(null);
+    const cartCount = useOrderStore((state) => state.orders.reduce((sum: number, it: any) => sum + (it.quantity || 0), 0));
 
     const handleSearch = (text: string) => {
         setSearchText(text);
@@ -49,8 +51,13 @@ const Header = ({ onSearch }: HeaderProps) => {
                         <TouchableOpacity onPress={() => router.push('/wishlist')}>
                             <Image source={require('../../assets/images/header/icon-like.png')} style={styles.smallIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={toggleSearch}>
+                        <TouchableOpacity onPress={toggleSearch} style={styles.basketWrap}>
                             <Image source={require('../../assets/images/homeScreen/icon-basket.png')} style={styles.smallIcon} />
+                            {cartCount > 0 && (
+                                <View style={styles.badge}>
+                                    <Text style={styles.badgeText}>{cartCount}</Text>
+                                </View>
+                            )}
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -118,11 +125,35 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 12,
     },
+        basketWrap: {
+            position: 'relative',
+        },
     smallIcon: {
         width: 22,
         height: 22,
         tintColor: colors.title,
     },
+        badge: {
+            position: 'absolute',
+            top: -6,
+            right: -8,
+            backgroundColor: colors.red,
+            borderRadius: 10,
+            minWidth: 18,
+            height: 18,
+            paddingHorizontal: 4,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderWidth: 1,
+            borderColor: colors.borderMuted,
+        },
+        badgeText: {
+            color: colors.white,
+            fontSize: 11,
+            fontWeight: '700',
+            lineHeight: 12,
+            textAlign: 'center',
+        },
     searchRow: {
         flexDirection: "row",
         alignItems: 'center',

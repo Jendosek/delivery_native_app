@@ -28,6 +28,7 @@ const { width, height } = Dimensions.get('screen');
 
 const PromotionScreen = () => {
   const [selectedId, setSelectedId] = useState(0);
+  const [circleColor, setCircleColor] = useState(['black', 'black', 'black']);
   const handleItemSelect = (id, sharedLink) => () => {
     setSelectedId(id);
     handleShare(sharedLink);
@@ -60,18 +61,47 @@ const PromotionScreen = () => {
     )
   };
 
+  const onFlatListScroll = (event) => {
+    const {contentOffset}= event.nativeEvent;
+    const currentIndex = Math.round(contentOffset.x / width);
+    setSelectedId(currentIndex);
+    updateCircleColors(currentIndex);
+  }
+  const updateCircleColors = (currentIndex) => {
+    const newColors = circleColor.map((color, index) =>
+      index === currentIndex ? 'grey' : 'red'
+    );
+    setCircleColor(newColors);
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={DATA}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        extraData={selectedId}
-      />
-    </SafeAreaView>
+    <View style={styles.container}>
+      <TouchableWithoutFeedback>
+        <View style={styles.wrapBackground}>
+          <Text style={styles.title}>Sale</Text>
+          <View style={styles.wrapContent}>
+            <FlatList
+              data={DATA}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              extraData={selectedId}
+              onScroll={onFlatListScroll}
+            />
+            <View style={styles.circleContainer}>
+              {circleColor.map((color, index) => (
+                <View key={index}
+                  style={[styles.circle, { backgroundColor: color }]} />
+              ))}
+            </View>
+          </View>
+        </View>
+
+      </TouchableWithoutFeedback>
+    </View>
+
   );
 }
 
@@ -86,4 +116,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
+  container: {
+    flex: 1
+  },
+  wrapBackground: {
+    flex: 1,
+    backgroundColor: colors.itemBackground,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: colors.green,
+    marginBottom: 20,
+    textDecorationLine: 'underline',
+  },
+  wrapContent: {
+    height: '75%',
+    overflow: 'scroll',
+  },
+  itemImage: {
+    width: 300,
+    height: 500,
+    alignSelf: 'center',
+  },
+  circleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  circle: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  }
 });
+
+export default PromotionScreen;

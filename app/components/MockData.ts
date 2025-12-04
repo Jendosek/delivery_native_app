@@ -328,76 +328,76 @@ export const mockMeats = [
 ]
 
 
-// export const mockCheese = [
-//   {
-//     id: '14',
-//     title: ' Feta',
-//     image: require('../../assets/images/pizzaToppings/cheese/feta.jpg'),
-//     price: '$1.20',
-//     weight:'50 g'
-//   },
-//   {
-//     id: '15',
-//     title: 'Blue-cheese',
-//     image: require('../../assets/images/pizzaToppings/cheese/blue-cheese.jpg'),
-//     price: '$1.99',
-//     weight:'50 g'
-//   },
-//   {
-//     id: '16',
-//     title: 'Mozzarella',
-//     image: require('../../assets/images/pizzaToppings/cheese/mozzarella.jpg'),
-//     price: '$1.30',
-//     weight:'50 g'
-//   },
-//   {
-//     id: '17',
-//     title: 'Parmesan ',
-//     image: require('../../assets/images/pizzaToppings/cheese/parmesan.jpg'),
-//     price: '$1.99',
-//     weight:'50 g'
-//   },
-//   {
-//     id: '18',
-//     title: ' Maasdam',
-//     image: require('../../assets/images/pizzaToppings/cheese/maasdam.jpg'),
-//     price: '$1.80',
-//     weight:'50 g'
-//   },
-//   {
-//     id: '19',
-//     title: 'Feta-greek ',
-//     image: require('../../assets/images/pizzaToppings/cheese/feta-greek.jpg'),
-//     price: '$1.15',
-//     weight:'50 g'
-//   },
+export const mockCheese = [
+  {
+    id: '14',
+    title: ' Feta',
+    image: require('../../assets/images/pizzaToppings/cheese/feta.jpg'),
+    price: '$1.20',
+    weight:'50 g'
+  },
+  {
+    id: '15',
+    title: 'Blue-cheese',
+    image: require('../../assets/images/pizzaToppings/cheese/blue-cheese.jpg'),
+    price: '$1.99',
+    weight:'50 g'
+  },
+  {
+    id: '16',
+    title: 'Mozzarella',
+    image: require('../../assets/images/pizzaToppings/cheese/mozzarella.jpg'),
+    price: '$1.30',
+    weight:'50 g'
+  },
+  {
+    id: '17',
+    title: 'Parmesan ',
+    image: require('../../assets/images/pizzaToppings/cheese/parmesan.jpg'),
+    price: '$1.99',
+    weight:'50 g'
+  },
+  {
+    id: '18',
+    title: ' Maasdam',
+    image: require('../../assets/images/pizzaToppings/cheese/maasdam.jpg'),
+    price: '$1.80',
+    weight:'50 g'
+  },
+  {
+    id: '19',
+    title: 'Feta-greek ',
+    image: require('../../assets/images/pizzaToppings/cheese/feta-greek.jpg'),
+    price: '$1.15',
+    weight:'50 g'
+  },
 
-// ]
+]
 
-// export const mockFish = [
-//   {
-//     id: '20',
-//     title: ' Salmon',
-//     image: require('../../assets/images/pizzaToppings/fish/salmon.jpg'),
-//     price: '$2.35',
-//     weight:'50 g'
-//   },
-//   {
-//     id: '21',
-//     title: 'Shrimps',
-//     image: require('../../assets/images/pizzaToppings/fish/shrimps.jpg'),
-//     price: '$2.50',
-//     weight:'50 g'
-//   },
-//   {
-//     id: '22',
-//     title: ' Crab-stick',
-//     image: require('../../assets/images/pizzaToppings/fish/crab-stick.jpg'),
-//     price: '$2.15',
-//     weight:'50 g'
-//   },
+export const mockFish = [
+  {
+    id: '20',
+    title: ' Salmon',
+    image: require('../../assets/images/pizzaToppings/fish/salmon.jpg'),
+    price: '$2.35',
+    weight:'50 g'
+  },
+  {
+    id: '21',
+    title: 'Shrimps',
+    image: require('../../assets/images/pizzaToppings/fish/shrimps.jpg'),
+    price: '$2.50',
+    weight:'50 g'
+  },
+  {
+    id: '22',
+    title: ' Crab-stick',
+    image: require('../../assets/images/pizzaToppings/fish/crab-stick.jpg'),
+    price: '$2.15',
+    weight:'50 g'
+  },
 
-// ]
+]
 
 // export const mockDrinks = [
 //   {

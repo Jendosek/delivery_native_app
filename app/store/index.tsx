@@ -74,7 +74,7 @@ export const useOrderStore = create<OrderState>((set, get) => ({
         set((state) => ({
             orders: state.orders.map((item) =>
                 item.id === orderItem.id && item.selectedSize === orderItem.selectedSize
-                    ? { ...item, quantity: (item.quantity || 1) + 1 }
+                    ? { ...item, quantity: (item.quantity ?? 0) + 1 }
                     : item
             )
         })),
@@ -84,12 +84,13 @@ export const useOrderStore = create<OrderState>((set, get) => ({
             orders: state.orders
                 .map((item) => {
                     if (item.id === orderItem.id && item.selectedSize === orderItem.selectedSize) {
-                        const newQuantity = (item.quantity || 1) - 1;
-                        return { ...item, quantity: newQuantity >= 0 ? newQuantity : 0 };
+                        const current = item.quantity ?? 1;
+                        const newQuantity = Math.max(1, current - 1);
+                        return { ...item, quantity: newQuantity };
                     }
                     return item;
-                }
-                ),
+                })
+                ,
         })),
 }));
 

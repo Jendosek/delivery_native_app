@@ -12,7 +12,7 @@ const BasketScreen = () => {
     const confirmOrder = useOrderStore((state) => state.confirmOrder);
     const increaseQuantity = useOrderStore((state) => state.increaseQuantity);
     const decreaseQuantity = useOrderStore((state) => state.decreaseQuantity);
-    const totalItems = useOrderStore((state) => state.totalItems);
+    const totalItems = useOrderStore((state) => state.totalItems());
     const getPriceForPizza = useOrderStore((state) => state.getPriceForPizza);
     const [confirmationMessage, setConfirmationMessage] = useState('');
 
