@@ -18,17 +18,39 @@ const BasketScreen = () => {
 
     const total = calculateTotalAmount(orders, getPriceForPizza);
 
-    function calculateTotalAmount(orders: any[], getPriceForPizza: (item: any) => { pricePizza: string; price: number; volume: string }) {
+    function calculateTotalAmount(orders, getPriceForPizza) {
         let totalAmount = 0;
         orders.forEach((item) => {
-            const priceInfo = getPriceForPizza(item);
-            const itemTotal = priceInfo.price * (item.quantity || 1);
+            const priceData = getPriceForPizza(item);
+            const itemTotal = priceData.pricePizza * (item.quantity || 1);
             totalAmount += itemTotal;
         });
-        return {
-            totalAmount: `$${totalAmount.toFixed(2)}`,
-        };
+        return { totalAmount: `$${totalAmount.toFixed(2)}` };
     }
+
+
+
+    const onPress = () => {
+        clearOrders();
+        setConfirmationMessage('Order successfully cleared!');
+        setTimeout(() => {
+            setConfirmationMessage('');
+        }, 2000);
+    }
+
+    const onItemRemove = (item: any) => {
+        removeOrder(item);
+    }
+
+    const confirmeOreder = () => {
+        confirmOrder();
+        setConfirmationMessage('Order successfully confirmed!');
+        setTimeout(() => {
+            setConfirmationMessage('');
+        }, 2000);
+    }
+
+
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>
@@ -37,7 +59,7 @@ const BasketScreen = () => {
             </View>
             <View style={styles.wrapRight}>
                 <View style={styles.wrapTitle}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => onItemRemove(item)}>
                         <Ionicons name="close-circle" size={20} color={colors.title} />
                     </TouchableOpacity>
                 </View>
@@ -63,7 +85,7 @@ const BasketScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.titleContainer}>
-                <Text style={styles.titleClear}>Clear</Text>
+                <Text style={styles.titleClear} onPress={onPress}>Clear</Text>
                 <Text style={styles.titleOrder}>{`In your basket ${totalItems} items`}</Text>
             </View>
             <FlatList
@@ -83,9 +105,14 @@ const BasketScreen = () => {
                             <Text style={styles.totalPrice}>{total.totalAmount}</Text>
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.confirmButton}>
+                    <TouchableOpacity style={styles.confirmButton} onPress={confirmeOreder}>
                         <Text style={styles.wrapTotal}>Confirm Order</Text>
                     </TouchableOpacity>
+                </View>
+            )}
+            {confirmationMessage && (
+                <View style={styles.confirmationMessageContainer}>
+                    <Text style={styles.confirmationMessageText}>{confirmationMessage}</Text>
                 </View>
             )}
         </SafeAreaView>
@@ -160,6 +187,11 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: colors.green,
     },
+    totalPrice: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: colors.green,
+    },
     quantityContainer: {
         flexDirection: 'row',
         marginTop: 20,
@@ -185,8 +217,40 @@ const styles = StyleSheet.create({
     iconCart: {
         width: 91,
         height: 91,
+    },
+    totalContainer: {
+        margin: 10,
+    },
+    wrapTotal: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    wrapTotalTitle: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    totalTitle: {
+        color: colors.title,
+        fontSize: 18,
+    },
+    confirmButton: {
+        backgroundColor: colors.green,
+        padding: 14,
+        borderRadius: 8,
+        marginTop: 10,
+        alignItems: 'center',
+    },
+    confirmationMessageContainer: {
+        backgroundColor: 'lightgreen',
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 40,
+        alignItems: 'center',
+    },
+    confirmationMessageText: {
+        color: 'darkgreen',
+        fontSize: 16,
     }
-
 });
 
 export default BasketScreen;
