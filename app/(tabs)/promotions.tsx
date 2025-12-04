@@ -75,9 +75,6 @@ const PromotionScreen = () => {
   );
 }
 
-
-
-
 const styles = StyleSheet.create({
   headerImage: {
     color: '#808080',

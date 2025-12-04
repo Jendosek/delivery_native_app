@@ -51,6 +51,10 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons size={size} name="settings-outline" color={color} />,
         }}
       />
+      {/** Hide non-tab routes if they exist under (tabs) */}
+      <Tabs.Screen name="about-us" options={{ href: null }} />
+      <Tabs.Screen name="contacts" options={{ href: null }} />
+      <Tabs.Screen name="delivery" options={{ href: null }} />
       <Tabs.Screen
         name="cart"
         options={{

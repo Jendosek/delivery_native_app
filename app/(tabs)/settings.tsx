@@ -2,13 +2,13 @@ import React, {useState} from "react";
 
 import { colors } from "../components/Colors";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import SupportModal from "../components/SupportModal";
 
 
 export default function SettingsScreen() {
   const [showModal, setShowModal] = useState(false);
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const onPressSupport = () => {
     setShowModal(true);
@@ -32,19 +32,19 @@ export default function SettingsScreen() {
         iconCard={require('../../assets/images/settingsScreen/icon-team.png')}
         title='About Us'
         iconArrow={require('../../assets/images/settingsScreen/icon-right-arrow.png')}
-        onPress={() => { }}
+        onPress={() => { router.push('/about-us'); }}
       />
       <ListItem
         iconCard={require('../../assets/images/settingsScreen/icon-pay.png')}
         title='Delivery and Payment'
         iconArrow={require('../../assets/images/settingsScreen/icon-right-arrow.png')}
-        onPress={() => { }}
+        onPress={() => { router.push('/delivery'); }}
       />
       <ListItem
         iconCard={require('../../assets/images/settingsScreen/icon-contacts.png')}
         title='Contacts'
         iconArrow={require('../../assets/images/settingsScreen/icon-right-arrow.png')}
-        onPress={() => { }}
+        onPress={() => { router.push('/contacts'); }}
       />
       <ListItem
         iconCard={require('../../assets/images/settingsScreen/icon-suport.png')}
