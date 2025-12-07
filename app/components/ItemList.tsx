@@ -7,15 +7,17 @@ import { colors } from "./Colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useOrderStore } from "../store/index";
 import { useOrderWishStore } from "../store/indexWishStore";
+import { useNavigation } from '@react-navigation/native';
 
 type CardProps = {
     item: Item;
     index: number;
-    tooglePizzaSize?: (item: Item) => void;
+    togglePizzaSize?: (item: Item) => void;
 };
 
 
-const Card = ({ item }: CardProps) => {
+const Card = ({ item, togglePizzaSize }: CardProps) => {
+    const navigation = useNavigation<any>();
     const [selectedSize, setSelectedSize] = useState(item.selectedSize || 32);
 
     const currentPrice = selectedSize === 32 ? item.newPrice : item.size42;
@@ -36,7 +38,6 @@ const Card = ({ item }: CardProps) => {
             price: priceForSize,
         });
 
-        
     }
 
     const onToggleLike = () => {
@@ -44,9 +45,13 @@ const Card = ({ item }: CardProps) => {
         if (isLiked) removeWish(payload);
         else addWish(payload);
     };
+    
+    const onItemPress = (pressedItem: Item) => {
+        navigation.navigate('item-details', {item: pressedItem, togglePizzaSize});
+    }
 
     return (
-        <TouchableOpacity activeOpacity={0.9} style={{ marginBottom: 12 }}>
+        <TouchableOpacity activeOpacity={0.9} style={{ marginBottom: 12 }} onPress={onItemPress}>
             <LinearGradient
                 colors={[colors.gradientStart, colors.gradientEnd]}
                 start={{ x: 0, y: 0 }}

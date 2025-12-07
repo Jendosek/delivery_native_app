@@ -1,26 +1,88 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, FlatList, SafeAreaView } from "react-native";
 import { colors } from "./Colors";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useOrderWishStore } from "../store/indexWishStore";
-import { mockVegetables, mockMeats, mockCheese, mockFish } from "./MockData";
+import { mockVegetables, mockMeats, mockCheese, mockFish, Item, Topping } from "./MockData";
+import { useOrderStore } from "../store";
 
-const ItemDetailScreen = ({ route }) => {
-    const { item, tooglePizzaSize } = route.params;
+export type ItemDetailScreenRouteParams = {
+    item: Item,
+    togglePizzaSize: (item: Item) => void
+}
+
+export type ItemDetailsProps = {
+    route: { params: ItemDetailScreenRouteParams }
+}
+
+const parsePrice = (value?:string) => parseFloat((value || '0').replace('$', ''));
+const formatPrice = (value:number) => `$${value.toFixed(2)}`;
+
+export const ItemDetailScreen: React.FC<ItemDetailsProps> = ({ route }) => {
+    const { item, togglePizzaSize } = route.params;
     const [selectedSize, setSelectedSize] = useState(item.selectedSize || 32);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selectedToppings, setSelectedToppings] = useState([]);
-    const [totalPrice, setTotalPrice] = useState();
+    const [selectedCategory, setSelectedCategory] = useState<Topping[] | null>(null);
+    const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
+    const [totalPrice, setTotalPrice] = useState<string>(() => {
+        const basePrice = selectedSize === 42 ? item.size42 : item.newPrice;
+        return basePrice || '$0';
+    });
+
+    const addOrder = useOrderStore((state) => state.setOrders);
+
+    const updateTotalPrice = () => {
+        const basePrice = selectedSize === 42 ? item.size42 : item.newPrice;
+        const basePriceValue = parsePrice(basePrice);
+        const toppingsPrice = selectedToppings.reduce((sum, topping) => sum + parsePrice(topping.price), 0);
+        const newTotal = basePriceValue + toppingsPrice;
+        setTotalPrice(formatPrice(newTotal));
+    }
 
     const isLiked = useOrderWishStore((s) => s.isItemLiked({ ...item }));
+
+
 
     const onPressCategory = (category) => {
         setSelectedCategory(category);
     }
 
-    // const renderProductList = (data, key) => {
-    //     return
-    // }
+    const onPressProduct = (topping: Topping) => {
+        const isSelected = selectedToppings.some((selected) => selected.id === topping.id);
+        const updatedToppings = isSelected
+            ? selectedToppings.filter((selected) => selected.id !== topping.id)
+            : [...selectedToppings, topping];
+        setSelectedToppings(updatedToppings);
+        updateTotalPrice();
+    }
+
+    const renderProductList = (data, key: string) => (
+        <FlatList
+            key={key}
+            data={data}
+            keyExtractor={(topping) => topping.id}
+            numColumns={3}
+            renderItem={({ item: topping }) => {
+                const isSelected = selectedToppings.some((selected) => selected.id === topping.id);
+                return (
+                    <TouchableOpacity onPress={() => onPressProduct(topping)}>
+                        <View style={styles.itemContainer}>
+                            <Image source={topping.image} style={styles.itemImage} />
+                            <Text style={styles.itemTitle}>{topping.title}</Text>
+                            <View style={styles.itemTextContainer}>
+                                <Text style={styles.itemSubtitle}>{topping.price}</Text>
+                                <Text style={styles.itemSubtitle}>{topping.weight}</Text>
+                            </View>
+                            {isSelected && (
+                                <Image source={require("../../assets/images/pizzaScreen/icon-check.png")}
+                                    style={styles.checkMark}
+                                />
+                            )}
+                        </View>
+                    </TouchableOpacity>
+                )
+            }}
+        />
+    )
 
     const renderItem = () => {
         function setSelectedSize(arg0: number): void {
@@ -73,24 +135,49 @@ const ItemDetailScreen = ({ route }) => {
                     <View style={styles.toppingContainer}>
                         <Text style={styles.toppingTitle}>Add Topping</Text>
                         <View style={styles.categoryContainer}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => setSelectedCategory(mockVegetables)}>
                                 <Text style={selectedCategory === mockVegetables ? styles.selectedCategory : styles.category}>Vegetables</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => setSelectedCategory(mockMeats)}>
                                 <Text style={selectedCategory === mockMeats ? styles.selectedCategory : styles.category}>Meats</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => setSelectedCategory(mockCheese)}>
                                 <Text style={selectedCategory === mockCheese ? styles.selectedCategory : styles.category}>Cheeses</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => setSelectedCategory(mockFish)}>
                                 <Text style={selectedCategory === mockFish ? styles.selectedCategory : styles.category}>Fish</Text>
                             </TouchableOpacity>
                         </View>
+                        {selectedCategory && renderProductList(selectedCategory, 'unique-key')}
+                    </View>
+                    <View style={styles.priceContainer}>
+                        <View style={styles.priceText}>
+                            <Text style={styles.titlePrice}>Price:</Text>
+                            <Text style={styles.price}>${totalPrice}</Text>
+                        </View>
+                        <TouchableOpacity style={styles.buttonContainer}>
+                            <View style={styles.buttonContent}>
+                                <Text style={styles.text}>Get</Text>
+                                <Image source={require('../../assets/images/homeScreen/icon-basket.png')}
+                                    style={styles.cartIcon}
+                                />
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
         )
     }
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <FlatList
+                data={[item]}
+                renderItem={renderItem}
+                keyExtractor={(pizza) => pizza.id}
+            />
+        </SafeAreaView>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -196,7 +283,87 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: colors.title,
         marginTop: 20
-    }
+    },
+
+    itemContainer: {
+        width: 102,
+        alignItems: 'center',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.grey,
+    },
+
+    itemImage: {
+        width: 50,
+        height: 50,
+        marginRight: 10,
+        borderRadius: 25,
+    },
+    itemTitle: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        marginVertical: 5,
+        color: colors.title,
+    },
+    itemTextContainer: {
+        flexDirection: 'row',
+    },
+    itemSubtitle: {
+        fontSize: 10,
+        color: colors.textColor,
+        marginRight: 5,
+    },
+    checkMark: {
+        position: 'absolute',
+        top: 5,
+        right: 5,
+        width: 20,
+        height: 20,
+    },
+    container: {
+        flex: 1,
+        backgroundColor: colors.mainBackground,
+    },
+    priceContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 30,
+    },
+    priceText: {
+        flexDirection: 'row',
+    },
+    titlePrice: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        textDecorationLine: 'underline',
+        color: colors.textColor,
+    },
+    price: {
+        fontSize: 24,
+        color: colors.newPriceColor
+    },
+    buttonContainer: {
+        width: 120,
+        backgroundColor: colors.green,
+        borderRadius: 10,
+    },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 12,
+    },
+    text: {
+        fontSize: 18,
+        color: colors.white
+    },
+    cartIcon: {
+        width: 24,
+        height: 24,
+        marginLeft: 6,
+    },
+
+
 });
 
 
