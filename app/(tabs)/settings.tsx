@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 import { colors } from "../components/Colors";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ImageSourcePropType } from "react-native";
 import { useRouter } from "expo-router";
 import SupportModal from "../components/SupportModal";
 
@@ -14,7 +14,14 @@ export default function SettingsScreen() {
     setShowModal(true);
   }
 
-  const ListItem = (({ iconCard, title, iconArrow, onPress }) => {
+  type ListItemProps = {
+    iconCard: ImageSourcePropType;
+    title: string;
+    iconArrow: ImageSourcePropType;
+    onPress: () => void;
+  };
+
+  const ListItem = (({ iconCard, title, iconArrow, onPress }: ListItemProps) => {
     return (
       <TouchableOpacity onPress={onPress} style={styles.wrap}>
         <View style={styles.listItem}>

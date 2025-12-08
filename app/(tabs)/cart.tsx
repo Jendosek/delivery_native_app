@@ -18,11 +18,15 @@ const BasketScreen = () => {
 
     const total = calculateTotalAmount(orders, getPriceForPizza);
 
-    function calculateTotalAmount(orders, getPriceForPizza) {
+    function calculateTotalAmount(
+        orders: any[],
+        getPriceForPizza: (item: any) => { pricePizza: string; price: number; volume: string }
+    ) {
         let totalAmount = 0;
-        orders.forEach((item) => {
-            const priceData = getPriceForPizza(item);
-            const itemTotal = priceData.pricePizza * (item.quantity || 1);
+        orders.forEach((item: any) => {
+            const explicitPrice = typeof item.price === 'object' && item.price?.price ? item.price.price : null;
+            const base = explicitPrice ?? getPriceForPizza(item).price;
+            const itemTotal = base * (item.quantity || 1);
             totalAmount += itemTotal;
         });
         return { totalAmount: `$${totalAmount.toFixed(2)}` };
@@ -52,7 +56,7 @@ const BasketScreen = () => {
 
 
 
-    const renderItem = ({ item }) => (
+    const renderItem = ({ item }: { item: any }) => (
         <View style={styles.item}>
             <View style={styles.imageContainer}>
                 <Image source={item.image} style={styles.image} />
@@ -66,7 +70,11 @@ const BasketScreen = () => {
                 <View style={styles.priceContainer}>
                     <View style={styles.priceText}>
                         <Text style={styles.titlePrice}>Price:</Text>
-                        <Text style={styles.price}>{getPriceForPizza(item).pricePizza}</Text>
+                        <Text style={styles.price}>
+                            {typeof item.price === 'object' && item.price?.price
+                                ? `$${item.price.price.toFixed(2)}`
+                                : getPriceForPizza(item).pricePizza}
+                        </Text>
                     </View>
                 </View>
                 <View style={styles.quantityContainer}>

@@ -42,7 +42,7 @@ export const ItemDetailScreen: React.FC<ItemDetailsProps> = ({ route }) => {
 
 
 
-    const onPressCategory = (category) => {
+    const onPressCategory = (category: Topping[]) => {
         setSelectedCategory(category);
     }
 
@@ -52,10 +52,14 @@ export const ItemDetailScreen: React.FC<ItemDetailsProps> = ({ route }) => {
             ? selectedToppings.filter((selected) => selected.id !== topping.id)
             : [...selectedToppings, topping];
         setSelectedToppings(updatedToppings);
-        updateTotalPrice();
+        const basePrice = selectedSize === 42 ? item.size42 : item.newPrice;
+        const basePriceValue = parsePrice(basePrice);
+        const toppingsPrice = updatedToppings.reduce((sum, t) => sum + parsePrice(t.price), 0);
+        const newTotal = basePriceValue + toppingsPrice;
+        setTotalPrice(formatPrice(newTotal));
     }
 
-    const renderProductList = (data, key: string) => (
+    const renderProductList = (data: Topping[], key: string) => (
         <FlatList
             key={key}
             data={data}
@@ -85,10 +89,6 @@ export const ItemDetailScreen: React.FC<ItemDetailsProps> = ({ route }) => {
     )
 
     const renderItem = () => {
-        function setSelectedSize(arg0: number): void {
-            throw new Error("Function not implemented.");
-        }
-
         return (
             <View style={styles.item}>
                 <View style={styles.imageContainer}>
@@ -153,7 +153,7 @@ export const ItemDetailScreen: React.FC<ItemDetailsProps> = ({ route }) => {
                     <View style={styles.priceContainer}>
                         <View style={styles.priceText}>
                             <Text style={styles.titlePrice}>Price:</Text>
-                            <Text style={styles.price}>${totalPrice}</Text>
+                            <Text style={styles.price}>{totalPrice}</Text>
                         </View>
                         <TouchableOpacity style={styles.buttonContainer}>
                             <View style={styles.buttonContent}>

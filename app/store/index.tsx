@@ -45,13 +45,13 @@ export const useOrderStore = create<OrderState>((set, get) => ({
             return { orders: [...state.orders, { ...orderItem, quantity: 1 }] };
         }),
     getPriceForPizza: (item) => {
-        const basePrice = item.selectedSize === 42 ? item.size42 || '0' : item.newPrice || '0';
-        const pricePizza = (parseFloat(basePrice.replace('$', '')));
-
-        const priceString = typeof item.price === 'string' ? item.price : '0';
-
+        const basePriceString = item.selectedSize === 42 ? item.size42 || '0' : item.newPrice || '0';
+        const priceNumber = parseFloat(basePriceString.replace('$', '')) || 0;
+        const volume = item.selectedSize ? `${item.selectedSize} cm` : '';
         return {
-            pricePizza,
+            pricePizza: basePriceString,
+            price: priceNumber,
+            volume,
         }
     },
 
