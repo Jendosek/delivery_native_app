@@ -105,7 +105,7 @@ Two independent **Zustand** stores:
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/pronto-delivery-app.git
+git clone https://github.com/<Jendosek>/pronto-delivery-app.git
 cd pronto-delivery-app
 
 # Install dependencies
